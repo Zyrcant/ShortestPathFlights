@@ -14,29 +14,27 @@ import java.util.PriorityQueue;
  */
 public class Graph
 {
-    int numVertices;
     private HashMap<String, Vertex> nameVertex;
     public Graph()
     {
-        resetGraph();
-    }
-    public final void resetGraph()
-    {
-        numVertices = 0;
         nameVertex = new HashMap<>();
     }
-    public void addEdge(String source, String dest, int edgeCost)
+    public void addEdge(String source, String dest, int edgeCost, int o)
     {
         if(nameVertex.get(source) == null) //this is a new vertex
-            nameVertex.put(source, new Vertex(source));
+            nameVertex.put(source, new Vertex(source, o));
         if(nameVertex.get(dest) == null) //this is a new vertex
-            nameVertex.put(dest, new Vertex(dest));
+            nameVertex.put(dest, new Vertex(dest, o));
         Vertex v1 = nameVertex.get(source);
         Vertex v2 = nameVertex.get(dest);
         v1.adj.add(new Edge(v2, edgeCost));
     }
     public void dijkstra(String sourceVertexName)
     {
+        for(String key : nameVertex.keySet())
+        {
+            nameVertex.get(key).reset();
+        }
         PriorityQueue<Edge> pq = new PriorityQueue<>();
         Vertex source = nameVertex.get(sourceVertexName);
         if(source == null)
@@ -78,10 +76,30 @@ public class Graph
         }
         System.out.print(v.name);
     }
+
     public int returnCost(String s)
     {
         Vertex v = nameVertex.get(s);
+        if(v == null)
+            return Integer.MAX_VALUE;
         return v.dist;
     }
     
+    public int returnOther(String s)
+    {
+        Vertex v = nameVertex.get(s);
+        if(v == null)
+            return 0;
+        return returnOther(v, 0);
+    }
+    public int returnOther(Vertex v, int i)
+    {
+       int x = i;
+       if(v.path != null)
+       {
+           x += v.path.other;
+           x = returnOther(v.path, x);
+       }
+       return x;
+    }
 }

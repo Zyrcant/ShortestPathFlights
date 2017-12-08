@@ -7,7 +7,6 @@ package project6;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -35,8 +34,8 @@ public class Project6 {
         {
             String inputLine = sc2.nextLine();
             String[] input = inputLine.split("\\|");
-            gCost.addEdge(input[0], input[1], Integer.parseInt(input[2]));
-            gTime.addEdge(input[0], input[1], Integer.parseInt(input[3]));
+            gCost.addEdge(input[0], input[1], Integer.parseInt(input[2]), Integer.parseInt(input[3]));
+            gTime.addEdge(input[0], input[1], Integer.parseInt(input[3]), Integer.parseInt(input[2]));
         }
 
         Scanner sc = new Scanner(file2);
@@ -48,24 +47,24 @@ public class Project6 {
             String[] input = inputLine.split("\\|");
             gTime.dijkstra(input[0]);
             gCost.dijkstra(input[0]);
-            if(input[2].equals("T"))
+            if(gTime.returnCost(input[1]) == Integer.MAX_VALUE)
+                System.out.println("NO FLIGHT AVAILABLE FOR THE REQUEST");
+            else
             {
-                if(gTime.returnCost(input[1]) == Integer.MAX_VALUE)
-                    System.out.println("NO FLIGHT AVAILABLE FOR THE REQUEST");
-                else
-                {
+               if(input[2].equals("T"))
+               {
                     System.out.println(input[0] + ", " + input[1] + " (Time)");
                     gTime.printPath(input[1]);
-                    System.out.println(". Time: " + gTime.returnCost(input[1]) + " Cost: " +gCost.returnCost(input[1]) + ".00");
-                }
+                    System.out.println(". Time: " + gTime.returnCost(input[1]) + " Cost: " + gTime.returnOther(input[1]) + ".00\n");
+               }
+               else
+               {
+                   System.out.println(input[0] + ", " + input[1] + " (Cost)");
+                   gCost.printPath(input[1]);
+                   System.out.println(". Time: " + gCost.returnOther(input[1]) + " Cost: " + gCost.returnCost(input[1]) + ".00\n");
+               }
             }
-            else if (input[2].equals("C"))
-            {
-                gCost.dijkstra(input[0]);
-            }
-            
         }
-
     }
     
 }

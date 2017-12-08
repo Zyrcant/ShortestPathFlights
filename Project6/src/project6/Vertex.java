@@ -17,12 +17,19 @@ public class Vertex
     public LinkedList<Edge> adj;
     public boolean known;
     public int dist;
+    public int other;
     public Vertex path;
     
-    public Vertex(String name)
+    public Vertex(String name, int o)
     {
         this.name = name;
+        other = o;
         adj = new LinkedList<>();
+        reset();
+    }
+    
+    public final void reset()
+    {
         dist = Integer.MAX_VALUE; //set distance to infinity
         path = null;
         known = false;
