@@ -1,0 +1,12 @@
+A, C (Time)
+A -> C. Time: 1 Cost: 3.00
+
+A, C (Cost)
+A -> B -> C. Time: 4 Cost: 2.00
+
+A, D (Time)
+A -> C -> D. Time: 2 Cost: 7.00
+
+A, D (Cost)
+A -> B -> D. Time: 4 Cost: 2.00
+

@@ -1,3 +1,5 @@
-2
+4
 A|C|T
 A|C|C
+A|D|T
+A|D|C

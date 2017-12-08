@@ -1,36 +1,60 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Name of the Student: Tiffany Do
+ * Class: CS 3345
+ * Section: 001
+ * Semester: Fall 2017
+ * Project 6: Shortest path algorithm for planes based on time and cost
  */
-package project6;
-
-import java.util.HashMap;
-import java.util.PriorityQueue;
 
 /**
  *
- * @author Chawp
+ * @author Tiffany Do
  */
+package project6;
+
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.PriorityQueue;
+
+
 public class Graph
 {
+    //HashMap to keep track of what vertex is associated with what name
     private HashMap<String, Vertex> nameVertex;
     public Graph()
     {
         nameVertex = new HashMap<>();
     }
+    
+    /** 
+    * adds an edge to the graph given a source vertex, destination vertex, edge cost, and cost of other element (either time/cost depending on what the user queries)
+    * 
+    * @param source Source vertex
+    * @param dest Destination vertex
+    * @param edgeCost Cost of the edge
+    * @param o Cost of the other element of the edge
+    * 
+    */
     public void addEdge(String source, String dest, int edgeCost, int o)
     {
         if(nameVertex.get(source) == null) //this is a new vertex
-            nameVertex.put(source, new Vertex(source, o));
+            nameVertex.put(source, new Vertex(source));
         if(nameVertex.get(dest) == null) //this is a new vertex
-            nameVertex.put(dest, new Vertex(dest, o));
+            nameVertex.put(dest, new Vertex(dest));
         Vertex v1 = nameVertex.get(source);
         Vertex v2 = nameVertex.get(dest);
-        v1.adj.add(new Edge(v2, edgeCost));
+        v1.adj.add(new Edge(v2, edgeCost, o));
     }
+    
+    /** 
+    * Runs dijkstra's algorithm given a source vertex on the graph
+    * 
+    * @param sourceVertexName The vertex to be used as the source
+    * 
+    */
     public void dijkstra(String sourceVertexName)
     {
+        //resets all vertices to infinite distance
         for(String key : nameVertex.keySet())
         {
             nameVertex.get(key).reset();
@@ -39,7 +63,7 @@ public class Graph
         Vertex source = nameVertex.get(sourceVertexName);
         if(source == null)
             return;
-        pq.add(new Edge(source, 0));
+        pq.add(new Edge(source, 0, 0));
         source.dist = 0;
         //all other vertices are already initialized to infinity distance within vertex class
         while(!pq.isEmpty())
@@ -54,29 +78,46 @@ public class Graph
                     //relaxation procedure on u
                     Vertex v = u.adj.get(i).vertex2;
                     int costvw = u.adj.get(i).cost;
+                    int othervw = u.adj.get(i).other;
                     if(u.dist + costvw < v.dist)
                     {
                         v.dist = u.dist + costvw;
+                        v.other = u.other + othervw;
                         v.path = u;
-                        pq.add(new Edge(v, v.dist));
+                        pq.add(new Edge(v, v.dist, v.other));
                     }
                 }
             }
         }
     }
-    public void printPath(String s)
+    
+    /** 
+    * Prints the path to a vertex after shortest path has been run
+    * 
+    * 
+    * @param s name of the Vertex
+    * @param out writes to stream
+    */
+    public void printPath(String s, PrintWriter out)
     {
         Vertex v = nameVertex.get(s);
         if(v == null)
             return;
         if(v.path != null)
         {
-            printPath(v.path.name);
-            System.out.print(" -> ");
+            printPath(v.path.name, out);
+            out.print(" -> ");
         }
-        System.out.print(v.name);
+        out.print(v.name);
     }
-
+    
+    /** 
+    * returns the cost of the queried element (time/cost)
+    * 
+    * @param s name of the Vertex
+    * @return cost of the shortest path
+    * 
+    */
     public int returnCost(String s)
     {
         Vertex v = nameVertex.get(s);
@@ -85,21 +126,19 @@ public class Graph
         return v.dist;
     }
     
+    /** 
+    * returns the cost of the other element (time/cost)
+    * 
+    * @param s name of the Vertex
+    * @return cost of the shortest path
+    * 
+    */
     public int returnOther(String s)
     {
         Vertex v = nameVertex.get(s);
         if(v == null)
-            return 0;
-        return returnOther(v, 0);
+            return Integer.MAX_VALUE;
+        return v.other;
     }
-    public int returnOther(Vertex v, int i)
-    {
-       int x = i;
-       if(v.path != null)
-       {
-           x += v.path.other;
-           x = returnOther(v.path, x);
-       }
-       return x;
-    }
+  
 }
